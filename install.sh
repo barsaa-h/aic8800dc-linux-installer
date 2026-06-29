@@ -35,11 +35,17 @@ else
     git clone --depth 1 "$DRIVER_REPO" "$DRIVER_DIR"
 fi
 
-# --- Apply interface interface fix ---
+# --- Apply interface fix ---
 info "Patching driver for WiFi-only dongles..."
 patch_file="$DRIVER_DIR/drivers/aic8800/aic8800_fdrv/aicwf_usb.c"
 if grep -q 'bNumInterfaces != 3' "$patch_file" && ! grep -q 'bNumInterfaces != 1' "$patch_file"; then
     sed -i 's/bNumInterfaces != 3/bNumInterfaces != 3 \&\& usb->actconfig->desc.bNumInterfaces != 1/' "$patch_file"
+fi
+
+# --- Fix USB unplug crash (missing URB cancellation) ---
+info "Fixing USB unplug crash..."
+if grep -q '//aicwf_usb_cancel_all_urbs' "$patch_file"; then
+    sed -i 's|//aicwf_usb_cancel_all_urbs(usb_dev);//AIDEN|aicwf_usb_cancel_all_urbs(usb_dev);|' "$patch_file"
 fi
 
 # --- Install firmware ---
