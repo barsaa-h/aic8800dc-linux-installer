@@ -48,3 +48,19 @@ The driver is built and signed via **DKMS**, which means when your kernel update
 ## License
 
 The installer script is MIT. The driver source is from [AIC semiconductor](https://github.com/15554/aic8800dc-linux-patched) under their own license (GPL). Firmware files are redistributable per AIC's terms.
+
+## Basic diagnostics
+
+If the Wi-Fi adapter is not detected or installation fails, these read-only commands can help collect information before troubleshooting:
+
+```bash
+lsusb
+uname -r
+dkms status
+```
+
+- `lsusb` lists connected USB devices, including their vendor and product IDs.
+- `uname -r` shows the currently running Linux kernel version.
+- `dkms status` reports installed DKMS modules, if DKMS is installed.
+
+These commands do not install or remove drivers. This section documents troubleshooting only; it does not change the installer or guarantee hardware compatibility.
